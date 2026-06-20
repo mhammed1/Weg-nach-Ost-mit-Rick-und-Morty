@@ -18,7 +18,7 @@ git clone <repo-url>
 cd Rick-und-Morty
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -r Rick-und-Morty/backend/requirements.txt
+pip install -r backend/requirements.txt
 ```
 
 Wichtiger Hinweis zu Secrets:
