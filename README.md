@@ -9,7 +9,7 @@ https://rickandmortyapi.com/api
 - Wissensbasis: lokale ChromaDB
 - Embeddings: Jina Embeddings API
 - LLM: Groq
-- Frontend: html und js
+- Frontend: einfach html, css und js
 
 ## Quickstart (5 Minuten)
 
@@ -64,5 +64,6 @@ curl -X POST http://127.0.0.1:8000/api/chat -H "Content-Type: application/json" 
 - Hybrid Retrieval (Vektor + Keyword)
 - Re Ranking
 - Output Validator gegen Kontext
-- Optional: Feedback Logging, Streaming, Browse Modus
+- Optional: Feedback Logging, Browse Modus
 - Streaming-Antworten
+- Stokastik in confidenz

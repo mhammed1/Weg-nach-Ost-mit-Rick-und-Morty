@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import os
 import time
 from pathlib import Path
@@ -15,7 +14,6 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 CHROMA_DIR = BASE_DIR / "data" / "chroma"
-STATS_PATH = BASE_DIR / "data" / "stats.json"
 
 API_BASE = "https://rickandmortyapi.com/api"
 COLLECTION_NAME = "oracle_jina_v1"
@@ -159,6 +157,7 @@ def confidence(distance_list: list, source_count: int) -> float:
 
 
 def _build_sources(metas: list, distances: list) -> list:
+    # Baut eine Liste von Quellen aus Metadaten und Distanzwerten.
     sources: list = []
     for idx, meta in enumerate(metas):
         sources.append(
@@ -169,7 +168,6 @@ def _build_sources(metas: list, distances: list) -> list:
             "score": distances[idx] if idx < len(distances) else 0.0,
             }
         )
-
     return sources
 
 
@@ -244,8 +242,6 @@ def ingest_data() -> dict:
         "locations": len(entity_data["location"]),
         "documents": len(ids),
     }
-    STATS_PATH.parent.mkdir(parents=True, exist_ok=True)
-    STATS_PATH.write_text(json.dumps(stats, ensure_ascii=True), encoding="utf-8")
     return stats
 
 
