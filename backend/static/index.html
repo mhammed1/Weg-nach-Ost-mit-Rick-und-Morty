@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interdimensional Oracle</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Bebas+Neue&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div id="app" class="shell">
+      <header class="topbar">
+        <h1>Interdimensional Oracle</h1>
+        <div class="topbar-actions">
+          <button @click="runIngest" :disabled="loadingIngest">
+            {{ loadingIngest ? 'Ingest läuft...' : 'Daten aktualisieren' }}
+          </button>
+          <button class="danger-btn" @click="clearHistory" :disabled="loadingChat || !messages.length">
+            Verlauf löschen
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <section class="panel chat-panel">
+          <h2>Chat</h2>
+          <div class="chat-window" ref="chatWindow">
+            <article
+              v-for="(msg, index) in messages"
+              :key="index"
+              class="bubble"
+              :class="msg.role"
+            >
+              <p>{{ msg.content }}</p>
+              <div v-if="msg.sources?.length" class="sources">
+                <strong>Sources</strong>
+                <ul>
+                  <li v-for="(s, i) in msg.sources" :key="i">
+                    <a :href="s.url" target="_blank" rel="noreferrer">{{ s.name }} ({{ s.type }})</a>
+                  </li>
+                </ul>
+              </div>
+              <div v-if="msg.confidence !== undefined" class="confidence">
+                Confidence: {{ msg.confidence.toFixed(1) }}%
+              </div>
+            </article>
+          </div>
+
+          <form @submit.prevent="sendMessage" class="composer">
+            <textarea
+              v-model="draft"
+              placeholder="Frage zu Character, Episode oder Location stellen..."
+              rows="3"
+            ></textarea>
+            <button type="submit" :disabled="loadingChat || !draft.trim()">
+              {{ loadingChat ? 'Denke...' : 'Senden' }}
+            </button>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="/app.js?v=chat-json-2"></script>
+  </body>
+</html>
