@@ -18,8 +18,8 @@ CHROMA_DIR = BASE_DIR / "data" / "chroma"
 API_BASE = "https://rickandmortyapi.com/api"
 COLLECTION_NAME = "oracle_jina_v1"
 JINA_API_URL = "https://api.jina.ai/v1/embeddings"
-JINA_EMBEDDING_MODEL = os.getenv("JINA_EMBEDDING_MODEL", "jina-embeddings-v5-text-small")
-MIN_RELEVANCE_CONFIDENCE = float(os.getenv("MIN_RELEVANCE_CONFIDENCE", "60"))
+JINA_EMBEDDING_MODEL = "jina-embeddings-v5-text-small"
+MIN_RELEVANCE_CONFIDENCE = 60.0
 
 SYSTEM_PROMPT = """You are the Interdimensional Oracle, a Rick & Morty Universe analyst.
 STRICT RULES:
@@ -34,28 +34,19 @@ STRICT RULES:
 ENTITY_TYPES = ("character", "episode", "location")
 
 
-def collection() -> chromadb.Collection:
-    """Gibt die persistente Chroma-Collection des Oracle zurück."""
+def _chroma_client() -> chromadb.PersistentClient:
+    """Erzeugt einen persistenten Chroma-Client für das lokale Oracle-Verzeichnis."""
     CHROMA_DIR.mkdir(parents=True, exist_ok=True)
-    client = chromadb.PersistentClient(
+    return chromadb.PersistentClient(
         path=str(CHROMA_DIR),
         settings=Settings(anonymized_telemetry=False),
     )
+
+
+def collection() -> chromadb.Collection:
+    """Gibt die persistente Chroma-Collection des Oracle zurück."""
+    client = _chroma_client()
     return client.get_or_create_collection(name=COLLECTION_NAME)
-
-
-def _jina_api_key() -> str:
-    key = os.getenv("JINA_API_KEY", "").strip()
-    if not key:
-        raise RuntimeError("JINA_API_KEY is not configured")
-    return key
-
-
-def _groq_api_key() -> str:
-    key = os.getenv("GROQ_API_KEY", "").strip()
-    if not key:
-        raise RuntimeError("GROQ_API_KEY is not configured")
-    return key
 
 
 def embed_texts(texts: list[str], task: str) -> list[list[float]]:
@@ -73,7 +64,7 @@ def embed_texts(texts: list[str], task: str) -> list[list[float]]:
         JINA_API_URL,
         headers={
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {_jina_api_key()}",
+            "Authorization": f"Bearer {os.getenv('JINA_API_KEY', '').strip()}",
         },
         json=payload,
         timeout=60,
@@ -204,10 +195,7 @@ def ingest_data() -> dict:
     """Baut die lokale Wissensbasis aus Characters, Episodes und Locations neu auf."""
     entity_data = {entity_type: fetch_all(entity_type) for entity_type in ENTITY_TYPES}
 
-    client = chromadb.PersistentClient(
-        path=str(CHROMA_DIR),
-        settings=Settings(anonymized_telemetry=False),
-    )
+    client = _chroma_client()
     try:
         client.delete_collection(COLLECTION_NAME)
     except Exception:
@@ -267,9 +255,9 @@ def run_chat(payload: dict) -> dict:
     context_block = _build_context_block(docs, metas)
 
     prompt = _build_prompt(query, context_block)
-    client = Groq(api_key=_groq_api_key())
+    client = Groq(api_key=os.getenv("GROQ_API_KEY", "").strip())
     response = client.chat.completions.create(
-        model=os.getenv("GROQ_MODEL", "llama-3.1-8b-instant"),
+        model="llama-3.1-8b-instant",
         temperature=0.1,
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},

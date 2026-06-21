@@ -36,10 +36,8 @@ Dann `.env` im Projekt-Root mit deinen Keys befüllen:
 ```bash
 JINA_API_KEY=
 GROQ_API_KEY=
-GROQ_MODEL=llama-3.1-8b-instant
-JINA_EMBEDDING_MODEL=jina-embeddings-v5-text-small
-MIN_RELEVANCE_CONFIDENCE=60
 ```
+
 
 Starten:
 
