@@ -10,6 +10,10 @@ createApp({
     };
   },
   methods: {
+    isNoInfoAnswer(msg) {
+      const content = String(msg?.content || "").trim().toLowerCase();
+      return content.startsWith("ich habe keine informationen dazu in der rick & morty wissensdatenbank.");
+    },
     async runIngest() {
       this.loadingIngest = true;
       try {

@@ -37,7 +37,7 @@
               :class="msg.role"
             >
               <p>{{ msg.content }}</p>
-              <div v-if="msg.sources?.length" class="sources">
+              <div v-if="msg.sources?.length && !isNoInfoAnswer(msg)" class="sources">
                 <strong>Sources</strong>
                 <ul>
                   <li v-for="(s, i) in msg.sources" :key="i">
@@ -45,7 +45,7 @@
                   </li>
                 </ul>
               </div>
-              <div v-if="msg.confidence !== undefined" class="confidence">
+              <div v-if="msg.confidence !== undefined && !isNoInfoAnswer(msg)" class="confidence">
                 Confidence: {{ msg.confidence.toFixed(1) }}%
               </div>
             </article>
@@ -66,6 +66,6 @@
     </div>
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-    <script src="/app.js?v=chat-json-2"></script>
+    <script src="/app.js?v=chat-json-3"></script>
   </body>
 </html>

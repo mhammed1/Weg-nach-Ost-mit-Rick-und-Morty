@@ -251,6 +251,15 @@ def _build_prompt(query: str, context_block: str) -> str:
     )
 
 
+def _is_no_info_answer(answer: str) -> bool:
+    """Erkennt robuste Varianten der No-Info-Antwort, auch mit nachgestelltem Text."""
+    normalized = " ".join((answer or "").strip().split())
+    if not normalized:
+        return False
+    target = NO_INFO_ANSWER
+    return normalized.lower().startswith(target.lower())
+
+
 def ingest_data() -> dict:
     """Baut die lokale Wissensbasis aus Characters, Episodes und Locations neu auf."""
     entity_data = {entity_type: fetch_all(entity_type) for entity_type in ENTITY_TYPES}
@@ -329,7 +338,7 @@ def run_chat(payload: dict) -> dict:
 
     # Falls das Modell trotz vorhandener Treffer explizit "keine Informationen" meldet,
     # geben wir konsistent eine Guardrail-Antwort ohne Quellen zurück.
-    if answer.strip() == NO_INFO_ANSWER:
+    if _is_no_info_answer(answer):
         return {
             "answer": NO_INFO_ANSWER,
             "sources": [],
