@@ -43,10 +43,15 @@ Starten:
 
 ```bash
 python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 --reload
+```
+Wichtig: Nach dem Start zu http://127.0.0.1:8000 gehen und auf den Button "Daten aktualisieren" klicken.
+
+
+Optionel:
+```bash
 curl -X POST http://127.0.0.1:8000/api/ingest
 curl -X POST http://127.0.0.1:8000/api/chat -H "Content-Type: application/json" -d '{"message":"Wer ist Rick Sanchez?"}'
 ```
-
 ## MVP Status
 
 - Datenpipeline: done
@@ -73,7 +78,11 @@ curl -X POST http://127.0.0.1:8000/api/chat -H "Content-Type: application/json" 
 
 - Hybrid Retrieval (Vektor + Keyword)
 - Re Ranking
-- Output Validator gegen Kontext
-- Optional: Feedback Logging, Browse Modus
+- Kontext hinzüfugen
 - Streaming-Antworten
 - Stochastik in Konfidenz
+- Optional: Feedback Logging, Browse Modus
+- Button zum Suche nach Session (Chats)
+- .
+- .
+- .
